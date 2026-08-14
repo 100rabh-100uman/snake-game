@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Saurabh Suman's Snake Game</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Poppins:wght@300;400;600;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+  <div class="game-container">
+    <!-- Animated background particles -->
+    <div class="bg-particles" id="bgParticles"></div>
+    
+    <!-- Header -->
+    <div class="game-header">
+      <div class="logo">
+        <div class="snake-icon">🐍</div>
+        <div class="title-wrap">
+          <h2 class="game-subtitle">SNAKE GAME</h2>
+        </div>
+      </div>
+      <div class="level-selector">
+        <span class="level-label">DIFFICULTY:</span>
+        <button class="level-btn active" data-level="easy">🟢 EASY</button>
+        <button class="level-btn" data-level="medium">🟡 MEDIUM</button>
+        <button class="level-btn" data-level="hard">🔴 HARD</button>
+      </div>
+    </div>
+
+    <!-- Main Game Area: Stats | Game | Controls -->
+    <div class="game-main">
+      <!-- Left Sidebar: Stats & Rules -->
+      <div class="side-panel left-panel">
+        <div class="stats">
+          <div class="stat-box">
+            <span class="stat-label">SCORE</span>
+            <span class="stat-value" id="score">00</span>
+          </div>
+          <div class="stat-box">
+            <span class="stat-label">HIGH SCORE</span>
+            <span class="stat-value" id="highScore">00</span>
+          </div>
+          <div class="stat-box rules-box">
+            <span class="stat-label">GAME RULES</span>
+            <div class="rules-content">
+              <p>🍎 1 Fruit = <span class="rule-highlight">10 Points</span></p>
+              <p>🐍 Snake grows with each fruit</p>
+              <p>💀 Don't hit yourself</p>
+            </div>
+          </div>
+          <button class="sound-btn" id="soundBtn" title="Toggle Sound">
+            <span id="soundIcon">🔊</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Center: Game Canvas -->
+      <div class="center-area">
+        <!-- Live Score Bar (visible during gameplay) -->
+        <div class="live-score-bar" id="liveScoreBar">
+          <span class="live-score-label">LIVE SCORE</span>
+          <span class="live-score-value" id="liveScore">0</span>
+        </div>
+        
+        <div class="canvas-wrapper">
+          <div id="canvas"></div>
+          <div class="overlay" id="overlay">
+            <div class="overlay-content">
+              <h2 class="overlay-title">🐍 SNAKE GAME</h2>
+              <p class="overlay-text">Use Arrow Keys or WASD to control the snake</p>
+              <div class="level-selector overlay-levels">
+                <button class="level-btn active" data-level="easy">🟢 EASY</button>
+                <button class="level-btn" data-level="medium">🟡 MEDIUM</button>
+                <button class="level-btn" data-level="hard">🔴 HARD</button>
+              </div>
+              <button id="startBtn" class="btn-primary">▶ START GAME</button>
+            </div>
+          </div>
+          <div class="game-over-overlay" id="gameOverOverlay">
+            <div class="overlay-content">
+              <h2 class="overlay-title game-over-title">GAME OVER</h2>
+              <p class="overlay-text">Final Score: <span id="finalScore">0</span></p>
+              <p class="overlay-text">High Score: <span id="finalHighScore">0</span></p>
+              <button id="replay" class="btn-primary">🔄 PLAY AGAIN</button>
+            </div>
+          </div>
+        </div>
+        
+        <!-- In-Game Controls (visible during gameplay) -->
+        <div class="in-game-controls" id="inGameControls">
+          <button class="game-control-btn" id="pauseBtn">⏸ PAUSE</button>
+          <button class="game-control-btn exit-btn" id="exitBtn">🚪 EXIT</button>
+        </div>
+      </div>
+
+      <!-- Right Sidebar: Controls -->
+      <div class="side-panel right-panel">
+        <div class="controls-info">
+          <div class="control-group">
+            <span class="control-title">MOVEMENT</span>
+            <div class="control-key">
+              <span class="key">↑</span>
+              <span class="key">↓</span>
+              <span class="key">←</span>
+              <span class="key">→</span>
+            </div>
+            <span class="control-text">Arrow Keys</span>
+          </div>
+          <div class="control-group">
+            <span class="control-title">ALSO WORKS</span>
+            <div class="control-key">
+              <span class="key">W</span>
+              <span class="key">A</span>
+              <span class="key">S</span>
+              <span class="key">D</span>
+            </div>
+            <span class="control-text">WASD Keys</span>
+          </div>
+          <div class="control-group">
+            <span class="control-title">PAUSE</span>
+            <div class="control-key">
+              <span class="key space">SPACE</span>
+            </div>
+            <span class="control-text">Pause / Resume</span>
+          </div>
+          <div class="control-group">
+            <span class="control-title">EXIT</span>
+            <div class="control-key">
+              <span class="key space">ESC</span>
+            </div>
+            <span class="control-text">Exit Game</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="game-footer">
+      <p>Made with ❤️ by <span class="footer-name">Saurabh Suman</span></p>
+    </div>
+  </div>
+
+  <script src="./script.js"></script>
+</body>
+</html>
