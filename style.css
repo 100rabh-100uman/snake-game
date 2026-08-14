@@ -314,6 +314,15 @@ body {
   gap: 10px;
 }
 
+/* Mobile only elements - hidden on desktop */
+.mobile-stats {
+  display: none;
+}
+
+.touch-controls {
+  display: none;
+}
+
 /* Live Score Bar */
 .live-score-bar {
   display: none;
@@ -569,8 +578,14 @@ canvas {
   background-clip: text;
 }
 
-/* Mobile Responsive - Only show game box */
+/* Mobile Responsive */
 @media (max-width: 800px) {
+  html, body {
+    overflow-y: auto;
+    overflow-x: hidden;
+    height: auto;
+  }
+  
   .game-container {
     height: auto;
     min-height: 100vh;
@@ -582,35 +597,25 @@ canvas {
   .game-header {
     flex-direction: column;
     text-align: center;
-    gap: 10px;
+    gap: 8px;
   }
   
   .logo {
     flex-direction: column;
-    gap: 5px;
+    gap: 4px;
   }
   
   .title-wrap {
     text-align: center;
   }
   
-  .game-title {
-    font-size: 14px;
-  }
-  
   .game-subtitle {
     font-size: 18px;
   }
   
-  .level-selector {
-    flex-wrap: wrap;
-    justify-content: center;
-    padding: 8px 12px;
-  }
-  
-  .level-btn {
-    font-size: 11px;
-    padding: 6px 10px;
+  /* Hide desktop level selector */
+  .desktop-levels {
+    display: none !important;
   }
   
   .game-main {
@@ -630,6 +635,7 @@ canvas {
   .canvas-wrapper {
     width: 100%;
     max-width: 400px;
+    margin: 0 auto;
   }
   
   canvas {
@@ -645,8 +651,9 @@ canvas {
     font-size: 18px;
   }
   
+  /* In-game controls - only visible during gameplay */
   .in-game-controls {
-    display: flex !important;
+    display: none !important;
     gap: 10px;
   }
   
@@ -659,8 +666,127 @@ canvas {
     padding: 8px 20px;
   }
   
+  /* Mobile Stats Section */
+  .mobile-stats {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 100%;
+    max-width: 400px;
+    margin: 0 auto;
+    padding: 10px;
+  }
+  
+  .mobile-stats-grid {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+  }
+  
+  .mobile-stats-grid .stat-box {
+    min-width: 0;
+    width: 50%;
+    padding: 12px 15px;
+  }
+  
+  .mobile-rules {
+    width: 100%;
+    text-align: center;
+  }
+  
+  .mobile-sound-btn {
+    width: 100%;
+  }
+  
+  /* Touch Controls - Circular D-Pad */
+  .touch-controls {
+    display: none !important;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    padding: 15px 0;
+  }
+  
+  .touch-controls.visible {
+    display: flex !important;
+  }
+  
+  .d-pad {
+    position: relative;
+    width: 180px;
+    height: 180px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.05);
+    border: 2px solid rgba(76, 255, 215, 0.3);
+    backdrop-filter: blur(10px);
+    box-shadow: 0 0 30px rgba(76, 255, 215, 0.1);
+  }
+  
+  .d-pad-btn {
+    position: absolute;
+    width: 50px;
+    height: 50px;
+    border-radius: 12px;
+    background: rgba(76, 255, 215, 0.15);
+    border: 2px solid rgba(76, 255, 215, 0.3);
+    color: #4cffd7;
+    font-size: 20px;
+    font-weight: 700;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    user-select: none;
+    -webkit-user-select: none;
+    touch-action: manipulation;
+  }
+  
+  .d-pad-btn:active {
+    background: rgba(76, 255, 215, 0.4);
+    transform: scale(0.9);
+    box-shadow: 0 0 20px rgba(76, 255, 215, 0.5);
+  }
+  
+  .d-pad-btn.up {
+    top: 5px;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+  
+  .d-pad-btn.down {
+    bottom: 5px;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+  
+  .d-pad-btn.left {
+    left: 5px;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+  
+  .d-pad-btn.right {
+    right: 5px;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+  
+  .d-pad-btn.center {
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: rgba(76, 255, 215, 0.2);
+    font-size: 24px;
+    pointer-events: none;
+  }
+  
   .game-footer {
     font-size: 13px;
+    padding: 10px 0;
   }
 }
 
@@ -668,10 +794,6 @@ canvas {
   .game-container {
     padding: 8px;
     gap: 8px;
-  }
-  
-  .game-title {
-    font-size: 12px;
   }
   
   .game-subtitle {
@@ -693,5 +815,22 @@ canvas {
   
   .canvas-wrapper {
     max-width: 350px;
+  }
+  
+  .d-pad {
+    width: 160px;
+    height: 160px;
+  }
+  
+  .d-pad-btn {
+    width: 45px;
+    height: 45px;
+    font-size: 18px;
+  }
+  
+  .d-pad-btn.center {
+    width: 50px;
+    height: 50px;
+    font-size: 20px;
   }
 }

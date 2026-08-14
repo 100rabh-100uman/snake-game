@@ -13,6 +13,11 @@ const dom_liveScoreBar = document.querySelector("#liveScoreBar");
 const dom_inGameControls = document.querySelector("#inGameControls");
 const dom_pauseBtn = document.querySelector("#pauseBtn");
 const dom_exitBtn = document.querySelector("#exitBtn");
+const dom_mobileScore = document.querySelector("#mobileScore");
+const dom_mobileHighScore = document.querySelector("#mobileHighScore");
+const dom_mobileSoundBtn = document.querySelector("#mobileSoundBtn");
+const dom_mobileSoundIcon = document.querySelector("#mobileSoundIcon");
+const dom_touchControls = document.querySelector("#touchControls");
 const POINTS_PER_FRUIT = 10;
 
 document.querySelector("#canvas").appendChild(dom_canvas);
@@ -65,6 +70,7 @@ const LEVELS = {
 
 // Initialize high score display
 dom_highScore.innerText = maxScore.toString().padStart(2, "0");
+dom_mobileHighScore.innerText = maxScore.toString().padStart(2, "0");
 
 // Sound Effects using Web Audio API
 let audioCtx = null;
@@ -94,6 +100,8 @@ function toggleSound() {
   soundEnabled = !soundEnabled;
   dom_soundBtn.classList.toggle("muted", !soundEnabled);
   dom_soundIcon.innerText = soundEnabled ? "🔊" : "🔇";
+  dom_mobileSoundBtn.classList.toggle("muted", !soundEnabled);
+  dom_mobileSoundIcon.innerText = soundEnabled ? "🔊" : "🔇";
   if (soundEnabled) {
     initAudio();
   }
@@ -381,10 +389,10 @@ let KEY = {
 
         // Map WASD to arrow keys
         let mappedKey = e.key;
-        if (e.code === "KeyW") mappedKey = "ArrowUp";
-        if (e.code === "KeyS") mappedKey = "ArrowDown";
-        if (e.code === "KeyA") mappedKey = "ArrowLeft";
-        if (e.code === "KeyD") mappedKey = "ArrowRight";
+        if (e.code === "KeyW" || e.code === "ArrowUp") mappedKey = "ArrowUp";
+        if (e.code === "KeyS" || e.code === "ArrowDown") mappedKey = "ArrowDown";
+        if (e.code === "KeyA" || e.code === "ArrowLeft") mappedKey = "ArrowLeft";
+        if (e.code === "KeyD" || e.code === "ArrowRight") mappedKey = "ArrowRight";
 
         if (mappedKey === "ArrowUp" && (this.ArrowDown || this.KeyS)) return;
         if (mappedKey === "ArrowDown" && (this.ArrowUp || this.KeyW)) return;
@@ -844,10 +852,12 @@ class Particle {
 function incrementScore() {
   score += POINTS_PER_FRUIT;
   dom_score.innerText = score.toString().padStart(2, "0");
+  dom_mobileScore.innerText = score.toString().padStart(2, "0");
   dom_liveScore.innerText = score;
   if (score > maxScore) {
     maxScore = score;
     dom_highScore.innerText = maxScore.toString().padStart(2, "0");
+    dom_mobileHighScore.innerText = maxScore.toString().padStart(2, "0");
     window.localStorage.setItem("maxScore", maxScore);
   }
 }
@@ -877,6 +887,7 @@ function startGame() {
   isPaused = false;
   dom_liveScoreBar.classList.add("visible");
   dom_inGameControls.classList.add("visible");
+  dom_touchControls.classList.add("visible");
   reset();
 }
 
@@ -892,12 +903,14 @@ function exitGame() {
   isPaused = false;
   dom_liveScoreBar.classList.remove("visible");
   dom_inGameControls.classList.remove("visible");
+  dom_touchControls.classList.remove("visible");
   dom_overlay.style.display = "flex";
   dom_gameOverOverlay.style.display = "none";
   clearTimeout(requestID);
   // Reset the game state
   score = 0;
   dom_score.innerText = "00";
+  dom_mobileScore.innerText = "00";
   dom_liveScore.innerText = "0";
   snake = new Snake();
   food.spawn();
@@ -927,12 +940,25 @@ function initialize() {
   dom_replay.addEventListener("click", startGame, false);
   dom_startBtn.addEventListener("click", startGame, false);
   dom_soundBtn.addEventListener("click", toggleSound, false);
+  dom_mobileSoundBtn.addEventListener("click", toggleSound, false);
   dom_pauseBtn.addEventListener("click", togglePause, false);
   dom_exitBtn.addEventListener("click", exitGame, false);
   
   // Add level button listeners
   document.querySelectorAll(".level-btn").forEach((btn) => {
     btn.addEventListener("click", () => setLevel(btn.dataset.level));
+  });
+
+  // Touch controls - D-pad
+  document.querySelectorAll(".d-pad-btn[data-dir]").forEach((btn) => {
+    btn.addEventListener("touchstart", (e) => {
+      e.preventDefault();
+      handleTouchControl(btn.dataset.dir);
+    });
+    btn.addEventListener("click", (e) => {
+      e.preventDefault();
+      handleTouchControl(btn.dataset.dir);
+    });
   });
   
   loop();
@@ -974,9 +1000,10 @@ function gameOver() {
   // Play game over sound
   playGameOverSound();
 
-  // Hide live score and in-game controls
+  // Hide live score, in-game controls, and touch controls
   dom_liveScoreBar.classList.remove("visible");
   dom_inGameControls.classList.remove("visible");
+  dom_touchControls.classList.remove("visible");
 
   // Update game over overlay
   dom_finalScore.innerText = score;
@@ -985,8 +1012,34 @@ function gameOver() {
   isGameStarted = false;
 }
 
+// Handle touch D-pad controls
+function handleTouchControl(dir) {
+  if (!isGameStarted || isGameOver || isPaused) return;
+  
+  const cellSizeVal = snake.size;
+  
+  // Prevent reversing direction
+  if (dir === "up" && (KEY.ArrowDown || KEY.KeyS)) return;
+  if (dir === "down" && (KEY.ArrowUp || KEY.KeyW)) return;
+  if (dir === "left" && (KEY.ArrowRight || KEY.KeyD)) return;
+  if (dir === "right" && (KEY.ArrowLeft || KEY.KeyA)) return;
+  
+  // Set direction
+  const dirMap = {
+    up: () => { KEY.ArrowUp = true; KEY.ArrowDown = false; KEY.ArrowLeft = false; KEY.ArrowRight = false; KEY.KeyW = true; KEY.KeyS = false; KEY.KeyA = false; KEY.KeyD = false; },
+    down: () => { KEY.ArrowDown = true; KEY.ArrowUp = false; KEY.ArrowLeft = false; KEY.ArrowRight = false; KEY.KeyS = true; KEY.KeyW = false; KEY.KeyA = false; KEY.KeyD = false; },
+    left: () => { KEY.ArrowLeft = true; KEY.ArrowRight = false; KEY.ArrowUp = false; KEY.ArrowDown = false; KEY.KeyA = true; KEY.KeyD = false; KEY.KeyW = false; KEY.KeyS = false; },
+    right: () => { KEY.ArrowRight = true; KEY.ArrowLeft = false; KEY.ArrowUp = false; KEY.ArrowDown = false; KEY.KeyD = true; KEY.KeyA = false; KEY.KeyW = false; KEY.KeyS = false; }
+  };
+  
+  if (dirMap[dir]) {
+    dirMap[dir]();
+  }
+}
+
 function reset() {
   dom_score.innerText = "00";
+  dom_mobileScore.innerText = "00";
   dom_liveScore.innerText = "0";
   score = 0;
   snake = new Snake();

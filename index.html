@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Saurabh Suman's Snake Game</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -22,7 +22,8 @@
           <h2 class="game-subtitle">SNAKE GAME</h2>
         </div>
       </div>
-      <div class="level-selector">
+      <!-- Desktop only level selector -->
+      <div class="level-selector desktop-levels">
         <span class="level-label">DIFFICULTY:</span>
         <button class="level-btn active" data-level="easy">🟢 EASY</button>
         <button class="level-btn" data-level="medium">🟡 MEDIUM</button>
@@ -32,7 +33,7 @@
 
     <!-- Main Game Area: Stats | Game | Controls -->
     <div class="game-main">
-      <!-- Left Sidebar: Stats & Rules -->
+      <!-- Left Sidebar: Stats & Rules (Desktop) -->
       <div class="side-panel left-panel">
         <div class="stats">
           <div class="stat-box">
@@ -89,14 +90,25 @@
           </div>
         </div>
         
-        <!-- In-Game Controls (visible during gameplay) -->
+        <!-- In-Game Controls (Mobile only, visible during gameplay) -->
         <div class="in-game-controls" id="inGameControls">
           <button class="game-control-btn" id="pauseBtn">⏸ PAUSE</button>
           <button class="game-control-btn exit-btn" id="exitBtn">🚪 EXIT</button>
         </div>
+
+        <!-- Mobile Touch Controls (Circular D-Pad) -->
+        <div class="touch-controls" id="touchControls">
+          <div class="d-pad">
+            <button class="d-pad-btn up" data-dir="up" aria-label="Up">▲</button>
+            <button class="d-pad-btn left" data-dir="left" aria-label="Left">◀</button>
+            <button class="d-pad-btn center" aria-label="Center">🐍</button>
+            <button class="d-pad-btn right" data-dir="right" aria-label="Right">▶</button>
+            <button class="d-pad-btn down" data-dir="down" aria-label="Down">▼</button>
+          </div>
+        </div>
       </div>
 
-      <!-- Right Sidebar: Controls -->
+      <!-- Right Sidebar: Controls (Desktop) -->
       <div class="side-panel right-panel">
         <div class="controls-info">
           <div class="control-group">
@@ -135,6 +147,31 @@
           </div>
         </div>
       </div>
+    </div>
+
+    <!-- Mobile Stats & Rules (scrollable below game) -->
+    <div class="mobile-stats" id="mobileStats">
+      <div class="mobile-stats-grid">
+        <div class="stat-box">
+          <span class="stat-label">SCORE</span>
+          <span class="stat-value" id="mobileScore">00</span>
+        </div>
+        <div class="stat-box">
+          <span class="stat-label">HIGH SCORE</span>
+          <span class="stat-value" id="mobileHighScore">00</span>
+        </div>
+      </div>
+      <div class="stat-box rules-box mobile-rules">
+        <span class="stat-label">GAME RULES</span>
+        <div class="rules-content">
+          <p>🍎 1 Fruit = <span class="rule-highlight">10 Points</span></p>
+          <p>🐍 Snake grows with each fruit</p>
+          <p>💀 Don't hit yourself</p>
+        </div>
+      </div>
+      <button class="sound-btn mobile-sound-btn" id="mobileSoundBtn" title="Toggle Sound">
+        <span id="mobileSoundIcon">🔊</span>
+      </button>
     </div>
 
     <!-- Footer -->
