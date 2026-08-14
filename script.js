@@ -1,4 +1,4 @@
-// DOM Elements
+ // DOM Elements
 const dom_replay = document.querySelector("#replay");
 const dom_score = document.querySelector("#score");
 const dom_highScore = document.querySelector("#highScore");
@@ -18,7 +18,20 @@ const dom_mobileHighScore = document.querySelector("#mobileHighScore");
 const dom_mobileSoundBtn = document.querySelector("#mobileSoundBtn");
 const dom_mobileSoundIcon = document.querySelector("#mobileSoundIcon");
 const dom_touchControls = document.querySelector("#touchControls");
+const dom_joystickZone = document.querySelector("#joystickZone");
+const dom_joystickBase = document.querySelector("#joystickBase");
+const dom_joystickThumb = document.querySelector("#joystickThumb");
 const POINTS_PER_FRUIT = 10;
+let milestoneAudio = null;
+let milestonePlayed = false;
+
+// Try to load milestone audio (milestone.mp3)
+try {
+  milestoneAudio = new Audio("milestone.mp3");
+  milestoneAudio.volume = 0.9;
+} catch (e) {
+  milestoneAudio = null;
+}
 
 document.querySelector("#canvas").appendChild(dom_canvas);
 const CTX = dom_canvas.getContext("2d");
@@ -860,6 +873,13 @@ function incrementScore() {
     dom_mobileHighScore.innerText = maxScore.toString().padStart(2, "0");
     window.localStorage.setItem("maxScore", maxScore);
   }
+  
+  // Play milestone sound when score reaches 70 (7 fruits)
+  if (score >= 70 && !milestonePlayed && milestoneAudio && soundEnabled) {
+    milestonePlayed = true;
+    milestoneAudio.currentTime = 0;
+    milestoneAudio.play().catch(() => {});
+  }
 }
 
 function particleSplash() {
@@ -949,17 +969,93 @@ function initialize() {
     btn.addEventListener("click", () => setLevel(btn.dataset.level));
   });
 
-  // Touch controls - D-pad
-  document.querySelectorAll(".d-pad-btn[data-dir]").forEach((btn) => {
-    btn.addEventListener("touchstart", (e) => {
-      e.preventDefault();
-      handleTouchControl(btn.dataset.dir);
-    });
-    btn.addEventListener("click", (e) => {
-      e.preventDefault();
-      handleTouchControl(btn.dataset.dir);
-    });
+  // Dynamic Joystick Controls (Free Fire Style)
+  let joystickActive = false;
+  let joystickStartX = 0;
+  let joystickStartY = 0;
+  const joystickMaxRadius = 45;
+
+  function setJoystickDirection(dx, dy) {
+    if (Math.abs(dx) > Math.abs(dy)) {
+      if (dx > 0) {
+        if (!(KEY.ArrowLeft || KEY.KeyA)) {
+          KEY.ArrowRight = true; KEY.ArrowLeft = false; KEY.ArrowUp = false; KEY.ArrowDown = false;
+          KEY.KeyD = true; KEY.KeyA = false; KEY.KeyW = false; KEY.KeyS = false;
+        }
+      } else {
+        if (!(KEY.ArrowRight || KEY.KeyD)) {
+          KEY.ArrowLeft = true; KEY.ArrowRight = false; KEY.ArrowUp = false; KEY.ArrowDown = false;
+          KEY.KeyA = true; KEY.KeyD = false; KEY.KeyW = false; KEY.KeyS = false;
+        }
+      }
+    } else {
+      if (dy > 0) {
+        if (!(KEY.ArrowUp || KEY.KeyW)) {
+          KEY.ArrowDown = true; KEY.ArrowUp = false; KEY.ArrowLeft = false; KEY.ArrowRight = false;
+          KEY.KeyS = true; KEY.KeyW = false; KEY.KeyA = false; KEY.KeyD = false;
+        }
+      } else {
+        if (!(KEY.ArrowDown || KEY.KeyS)) {
+          KEY.ArrowUp = true; KEY.ArrowDown = false; KEY.ArrowLeft = false; KEY.ArrowRight = false;
+          KEY.KeyW = true; KEY.KeyS = false; KEY.KeyA = false; KEY.KeyD = false;
+        }
+      }
+    }
+  }
+
+  dom_joystickZone.addEventListener("touchstart", (e) => {
+    if (!isGameStarted || isGameOver || isPaused) return;
+    e.preventDefault();
+    const touch = e.touches[0];
+    joystickActive = true;
+    joystickStartX = touch.clientX;
+    joystickStartY = touch.clientY;
+    
+    // Show joystick at touch position
+    const zoneRect = dom_joystickZone.getBoundingClientRect();
+    const baseX = touch.clientX - zoneRect.left;
+    const baseY = touch.clientY - zoneRect.top;
+    dom_joystickBase.style.left = baseX + "px";
+    dom_joystickBase.style.top = baseY + "px";
+    dom_joystickBase.style.transform = "translate(-50%, -50%)";
+    dom_joystickBase.style.display = "flex";
+    dom_joystickThumb.style.transform = "translate(0, 0)";
   });
+  
+  dom_joystickZone.addEventListener("touchmove", (e) => {
+    if (!joystickActive || !isGameStarted || isGameOver || isPaused) return;
+    e.preventDefault();
+    const touch = e.touches[0];
+    
+    let dx = touch.clientX - joystickStartX;
+    let dy = touch.clientY - joystickStartY;
+    
+    const dist = Math.sqrt(dx * dx + dy * dy);
+    if (dist > joystickMaxRadius) {
+      dx = (dx / dist) * joystickMaxRadius;
+      dy = (dy / dist) * joystickMaxRadius;
+    }
+    
+    dom_joystickThumb.style.transform = `translate(${dx}px, ${dy}px)`;
+    
+    if (dist > 10) {
+      setJoystickDirection(dx, dy);
+    }
+  });
+  
+  dom_joystickZone.addEventListener("touchend", (e) => {
+    e.preventDefault();
+    joystickActive = false;
+    dom_joystickBase.style.display = "none";
+    dom_joystickThumb.style.transform = "translate(0, 0)";
+  });
+
+  // Lock scroll during gameplay on mobile
+  document.addEventListener("touchmove", (e) => {
+    if (isGameStarted && !isGameOver && !isPaused) {
+      e.preventDefault();
+    }
+  }, { passive: false });
   
   loop();
 }
@@ -1042,6 +1138,7 @@ function reset() {
   dom_mobileScore.innerText = "00";
   dom_liveScore.innerText = "0";
   score = 0;
+  milestonePlayed = false;
   snake = new Snake();
   food.spawn();
   KEY.resetState();

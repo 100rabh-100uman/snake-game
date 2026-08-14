@@ -634,7 +634,7 @@ canvas {
   
   .canvas-wrapper {
     width: 100%;
-    max-width: 400px;
+    max-width: 450px;
     margin: 0 auto;
   }
   
@@ -698,89 +698,56 @@ canvas {
     width: 100%;
   }
   
-  /* Touch Controls - Circular D-Pad */
+  /* Touch Controls - Dynamic Joystick (Free Fire Style) */
   .touch-controls {
     display: none !important;
     justify-content: center;
     align-items: center;
     width: 100%;
-    padding: 15px 0;
+    padding: 10px 0;
   }
   
   .touch-controls.visible {
     display: flex !important;
   }
   
-  .d-pad {
+  .joystick-zone {
     position: relative;
-    width: 180px;
-    height: 180px;
-    border-radius: 50%;
-    background: rgba(255, 255, 255, 0.05);
-    border: 2px solid rgba(76, 255, 215, 0.3);
-    backdrop-filter: blur(10px);
-    box-shadow: 0 0 30px rgba(76, 255, 215, 0.1);
-  }
-  
-  .d-pad-btn {
-    position: absolute;
-    width: 50px;
-    height: 50px;
-    border-radius: 12px;
-    background: rgba(76, 255, 215, 0.15);
-    border: 2px solid rgba(76, 255, 215, 0.3);
-    color: #4cffd7;
-    font-size: 20px;
-    font-weight: 700;
+    width: 100%;
+    height: 160px;
     display: flex;
     justify-content: center;
     align-items: center;
-    cursor: pointer;
-    transition: all 0.15s ease;
-    user-select: none;
-    -webkit-user-select: none;
-    touch-action: manipulation;
+    touch-action: none;
   }
   
-  .d-pad-btn:active {
-    background: rgba(76, 255, 215, 0.4);
-    transform: scale(0.9);
-    box-shadow: 0 0 20px rgba(76, 255, 215, 0.5);
-  }
-  
-  .d-pad-btn.up {
-    top: 5px;
-    left: 50%;
-    transform: translateX(-50%);
-  }
-  
-  .d-pad-btn.down {
-    bottom: 5px;
-    left: 50%;
-    transform: translateX(-50%);
-  }
-  
-  .d-pad-btn.left {
-    left: 5px;
-    top: 50%;
-    transform: translateY(-50%);
-  }
-  
-  .d-pad-btn.right {
-    right: 5px;
-    top: 50%;
-    transform: translateY(-50%);
-  }
-  
-  .d-pad-btn.center {
-    left: 50%;
-    top: 50%;
-    transform: translate(-50%, -50%);
-    width: 56px;
-    height: 56px;
+  .joystick-base {
+    position: absolute;
+    width: 100px;
+    height: 100px;
     border-radius: 50%;
-    background: rgba(76, 255, 215, 0.2);
-    font-size: 24px;
+    background: rgba(76, 255, 215, 0.08);
+    border: 2px solid rgba(76, 255, 215, 0.3);
+    backdrop-filter: blur(10px);
+    box-shadow: 0 0 20px rgba(76, 255, 215, 0.15);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+  }
+  
+  .joystick-thumb {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: rgba(76, 255, 215, 0.25);
+    border: 2px solid rgba(76, 255, 215, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 22px;
+    box-shadow: 0 0 15px rgba(76, 255, 215, 0.3);
     pointer-events: none;
   }
   
@@ -813,24 +780,18 @@ canvas {
     padding: 10px 25px;
   }
   
-  .canvas-wrapper {
-    max-width: 350px;
+  .joystick-base {
+    width: 90px;
+    height: 90px;
   }
   
-  .d-pad {
-    width: 160px;
-    height: 160px;
-  }
-  
-  .d-pad-btn {
+  .joystick-thumb {
     width: 45px;
     height: 45px;
-    font-size: 18px;
+    font-size: 20px;
   }
   
-  .d-pad-btn.center {
-    width: 50px;
-    height: 50px;
-    font-size: 20px;
+  .canvas-wrapper {
+    max-width: 400px;
   }
 }
