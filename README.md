@@ -1,6 +1,6 @@
 <div align="center">
 
-# 🐍 Saurabh Suman's Snake Game
+# 🐍 Snake Game
 
 *A modern, realistic & fully responsive Snake Game built with pure HTML, CSS & JavaScript*
 
